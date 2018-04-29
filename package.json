@@ -1,0 +1,51 @@
+{
+  "name": "babel-plugin-source",
+  "version": "0.0.0-semantically-released",
+  "description": "Extract source code to strings at build-time",
+  "engines": {
+    "node": ">=4",
+    "npm": ">=3"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "add-contributor": "kcd-scripts contributors add",
+    "build": "kcd-scripts build",
+    "lint": "eslint src",
+    "test": "kcd-scripts test",
+    "test:update": "npm test -- --updateSnapshot --coverage",
+    "validate": "kcd-scripts validate",
+    "precommit": "yarn validate"
+  },
+  "files": ["dist", "macro.js"],
+  "keywords": ["babel", "babel-plugin", "source", "code", "babel-plugin-macros"],
+  "author": "Kent C. Dodds <kent@doddsfamily.us> (http://kentcdodds.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "babel-plugin-macros": "^2.0.0",
+    "babel-register": "^6.26.0",
+    "babylon": "^6.18.0",
+    "eslint-config-react-tools": "^1.2.5",
+    "require-from-string": "^2.0.1"
+  },
+  "devDependencies": {
+    "ast-pretty-print": "^2.0.1",
+    "babel-plugin-tester": "^5.0.0",
+    "babel-preset-react": "^6.24.1",
+    "kcd-scripts": "^0.30.4"
+  },
+  "eslintConfig": {
+    "extends": "react-tools"
+  },
+  "eslintIgnore": ["node_modules", "coverage", "dist"],
+  "babel": {
+    "presets": "kcd-scripts/babel"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tannerlinsley/babel-plugin-source.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tannerlinsley/babel-plugin-source/issues"
+  },
+  "homepage": "https://github.com/tannerlinsley/babel-plugin-source#readme"
+}

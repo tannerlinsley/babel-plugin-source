@@ -1,0 +1,38 @@
+{
+  "projectName": "babel-plugin-sourcer",
+  "projectOwner": "tannerlinsley",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "tannerlinsley",
+      "name": "Tanner Linsley",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5580297?v=4",
+      "profile": "http://Nozzle.io",
+      "contributions": [
+        "code",
+        "design",
+        "doc",
+        "example"
+      ]
+    },
+    {
+      "login": "kentcdodds",
+      "name": "Kent C. Dodds",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1500684?v=4",
+      "profile": "https://kentcdodds.com",
+      "contributions": [
+        "question",
+        "code",
+        "ideas",
+        "plugin",
+        "talk",
+        "tool"
+      ]
+    }
+  ],
+  "repoType": "github"
+}
