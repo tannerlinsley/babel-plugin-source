@@ -17,11 +17,10 @@ Extract source code to strings at build-time
 [![PRs Welcome][prs-badge]][prs]
 [![Donate][donate-badge]][donate]
 [![Code of Conduct][coc-badge]][coc]
-[![Babel Macro][macros-badge]][babel-plugin-macros]
 [![Examples][examples-badge]][examples]
 
-[![Watch on GitHub][github-watch-badge]][github-watch]
 [![Star on GitHub][github-star-badge]][github-star]
+[![Watch on GitHub][github-watch-badge]][github-watch]
 [![Tweet][twitter-badge]][twitter]
 
 ## The problem
@@ -33,17 +32,17 @@ You are writing code that needs to both function and be displayed as raw text. Y
 `babel-plugin-source` allows you to extract arbitrary code blocks into string variables within the file they are located. This allows you to write the code once, then utilize it's raw text immediately in the same file. You can display it, log it, export it, etc.
 
 ```js
-let MyCompSource
+let MyCompSource;
 
 // @source MyCompSource
-const MyComp = () => <div>Hello there!</div>
+const MyComp = () => <div>Hello there!</div>;
 // @Source MyCompSource
 
 //      ↓ ↓ ↓ ↓ ↓ ↓
 
-let MyCompSource = `const MyComp = () => <div>Hello there!</div>`
+let MyCompSource = `const MyComp = () => <div>Hello there!</div>`;
 
-const MyComp = () => <div>Hello there!</div>
+const MyComp = () => <div>Hello there!</div>;
 ```
 
 ## Table of Contents
@@ -83,19 +82,19 @@ npm install --save-dev babel-plugin-source
 **Before**:
 
 ```javascript
-let MyCompSource
+let MyCompSource;
 
 // @source MyCompSource
-const MyComp = () => <div>Hello there!</div>
+const MyComp = () => <div>Hello there!</div>;
 // @Source
 ```
 
 **After**:
 
 ```javascript
-let MyCompSource = `const MyComp = () => <div>Hello there!</div>`
+let MyCompSource = `const MyComp = () => <div>Hello there!</div>`;
 
-const MyComp = () => <div>Hello there!</div>
+const MyComp = () => <div>Hello there!</div>;
 ```
 
 ## Configure with Babel
@@ -119,9 +118,9 @@ babel --plugins source script.js
 ### Via Node API
 
 ```javascript
-require('babel-core').transform('code', {
-  plugins: ['source'],
-})
+require("babel-core").transform("code", {
+  plugins: ["source"]
+});
 ```
 
 ## Use with `babel-plugin-macros`
@@ -133,23 +132,23 @@ For example:
 **Before**:
 
 ```javascript
-import source from 'babel-plugin-source/macro'
+import source from "babel-plugin-source/macro";
 
-const MyComponent = () => <div>Hello!</div>
+const MyComponent = () => <div>Hello!</div>;
 
-const MyComponentSource = source(MyComponent)
+const MyComponentSource = source(MyComponent);
 ```
 
 **After**:
 
 ```javascript
-const MyComponent = () => <div>Hello!</div>
+const MyComponent = () => <div>Hello!</div>;
 
 const MyComponentSource = `() => (
   <div>
     Hello!
   </div>
-)`
+)`;
 ```
 
 <!-- > You could also use [`source.macro`][source.macro] if you'd prefer to type less 😀 -->
@@ -236,8 +235,6 @@ MIT
 [donate]: http://kcd.im/donate
 [coc-badge]: https://img.shields.io/badge/code%20of-conduct-ff69b4.svg?style=flat-square
 [coc]: https://github.com/tannerlinsley/babel-plugin-source/blob/master/other/CODE_OF_CONDUCT.md
-[macros-badge]: https://img.shields.io/badge/babel--macro-%F0%9F%8E%A3-f5da55.svg?style=flat-square
-[babel-plugin-macros]: https://github.com/kentcdodds/babel-plugin-macros
 [examples-badge]: https://img.shields.io/badge/%F0%9F%92%A1-examples-8C8E93.svg?style=flat-square
 [examples]: https://github.com/tannerlinsley/babel-plugin-source/blob/master/other/EXAMPLES.md
 [github-watch-badge]: https://img.shields.io/github/watchers/tannerlinsley/babel-plugin-source.svg?style=social
