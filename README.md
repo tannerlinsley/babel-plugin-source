@@ -57,9 +57,7 @@ const MyComp = () => <div>Hello there!</div>;
   * [Via `.babelrc` (Recommended)](#via-babelrc-recommended)
   * [Via CLI](#via-cli)
   * [Via Node API](#via-node-api)
-* [Use with `babel-plugin-macros`](#use-with-babel-plugin-macros)
 * [Examples](#examples)
-* [Notes](#notes)
 * [FAQ](#faq)
   * [How is this different from [webpack][webpack] [loaders][webpack-loaders]?](#how-is-this-different-from-webpackwebpack-loaderswebpack-loaders)
 * [Other Solutions](#other-solutions)
@@ -126,26 +124,6 @@ require("babel-core").transform("code", {
 ## Examples
 
 * [React-Charts.js.org](https:react-charts.js.org) - Source code examples
-
-## Notes
-
-If you use `babel-plugin-transform-decorators-legacy`, there is a conflict because both plugins must be placed at the top
-
-Wrong:
-
-```json
-{
-  "plugins": ["source", "transform-decorators-legacy"]
-}
-```
-
-Ok:
-
-```json
-{
-  "plugins": ["source", ["transform-decorators-legacy"]]
-}
-```
 
 ## FAQ
 
