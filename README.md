@@ -1,8 +1,6 @@
 <div align="center">
-<h1>babel-plugin-source</h1>
-
-Extract source code to strings at build-time
-
+  <h1>babel-plugin-source</h1>
+  Extract source code to strings at build-time
 </div>
 
 <hr />
@@ -31,15 +29,19 @@ You are writing code that needs to both function and be displayed as raw text. Y
 
 `babel-plugin-source` allows you to extract arbitrary code blocks into string variables within the file they are located. This allows you to write the code once, then utilize it's raw text immediately in the same file. You can display it, log it, export it, etc.
 
+**Before**:
+
 ```js
 let MyCompSource;
 
 // @source MyCompSource
 const MyComp = () => <div>Hello there!</div>;
-// @Source MyCompSource
+// @source MyCompSource
+```
 
-//      ↓ ↓ ↓ ↓ ↓ ↓
+**After**:
 
+```javascript
 let MyCompSource = `const MyComp = () => <div>Hello there!</div>`;
 
 const MyComp = () => <div>Hello there!</div>;
