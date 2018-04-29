@@ -123,36 +123,6 @@ require("babel-core").transform("code", {
 });
 ```
 
-## Use with `babel-plugin-macros`
-
-Once you've [configured `babel-plugin-macros`](https://github.com/tannerlinsley/babel-plugin-macros/blob/master/other/docs/user.md)
-you can import/require the source macro at `babel-plugin-source/macro`.
-For example:
-
-**Before**:
-
-```javascript
-import source from "babel-plugin-source/macro";
-
-const MyComponent = () => <div>Hello!</div>;
-
-const MyComponentSource = source(MyComponent);
-```
-
-**After**:
-
-```javascript
-const MyComponent = () => <div>Hello!</div>;
-
-const MyComponentSource = `() => (
-  <div>
-    Hello!
-  </div>
-)`;
-```
-
-<!-- > You could also use [`source.macro`][source.macro] if you'd prefer to type less 😀 -->
-
 ## Examples
 
 * [React-Charts.js.org](https:react-charts.js.org) - Source code examples
