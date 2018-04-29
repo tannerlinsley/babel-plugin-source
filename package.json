@@ -18,7 +18,7 @@
   },
   "files": ["dist", "macro.js"],
   "keywords": ["babel", "babel-plugin", "source", "code", "babel-plugin-macros"],
-  "author": "Kent C. Dodds <kent@doddsfamily.us> (http://kentcdodds.com/)",
+  "author": "Tanner Linsley <tannerlinsley@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "babel-plugin-macros": "^2.0.0",
