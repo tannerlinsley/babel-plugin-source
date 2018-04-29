@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-source",
-  "version": "0.0.0-semantically-released",
+  "version": "0.0.1",
   "description": "Extract source code to strings at build-time",
   "engines": {
     "node": ">=4",
