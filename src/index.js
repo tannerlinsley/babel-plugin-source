@@ -1,7 +1,7 @@
 module.exports = sourcePlugin
 
 function sourcePlugin (babel) {
-  const { types: t, transformFromAst } = babel
+  const { types: t } = babel
 
   return {
     name: 'source',
@@ -10,69 +10,76 @@ function sourcePlugin (babel) {
         const { node } = path
 
         const { leading, trailing } = getSourceNameCommentsFromNode(node)
-        if (!leading.length && !trailing.length) {
+        if (node.__sourceHandled || (!leading.length && !trailing.length)) {
           return
         }
 
-        const firstLeading = leading[0]
+        node.__sourceHandled = true
+        const lastLeading = leading[leading.length - 1]
+        const firstTrailing = trailing[trailing.length - 1]
+        const sourceName = lastLeading.name
 
-        const ast = t.file(t.program([t.expressionStatement(removeSourceCommentsFromNode(node))]))
-        const { code: sourceString } = transformFromAst(ast)
-        const variablePath = path.find(path => path.scope.bindings[firstLeading.name])
+        const sourceCode = makeSourceCode(this.file.code, lastLeading.node, firstTrailing.node)
+
+        const variablePath = path.find(path => path.scope.bindings[sourceName])
         if (!variablePath || !variablePath.scope) {
-          return
+          throw path.buildCodeFrameError(
+            `Couldn't find the 'let/var ${sourceName}' variable for @source ${sourceName}!`
+          )
         }
-        variablePath.scope.bindings[firstLeading.name].path.node.init = t.stringLiteral(
-          sourceString
-        )
+        variablePath.scope.bindings[sourceName].path.node.init = t.stringLiteral(sourceCode)
+        removeSourceCommentsFromNode(node)
       },
       Scopable (path) {
+        // Don't handle nodes twice
+        if (path.node.__sourceHandled) {
+          return
+        }
+        path.node.__sourceHandled = true
+
         const { body } = path.node
 
         const sources = {}
 
         const handleComment = comment => {
-          // Don't handle duplicate comments
-          if (sources[comment.name] && sources[comment.name].open === comment.node) {
-            return
-          }
-          // If the source is open, close it
-          if (sources[comment.name] && sources[comment.name].open !== comment.node) {
-            sources[comment.name].open = false
-          } else {
-            // Otherwise, create or use the same one
-            sources[comment.name] = sources[comment.name] || {
-              nodes: [],
+          if (sources[comment.name]) {
+            // Don't handle duplicates
+            if (sources[comment.name].start === comment.node) {
+              return
             }
-            // And open it up
-            sources[comment.name].open = comment.node
+            // Don't handle closed sources
+            if (sources[comment.name].end) {
+              return
+            }
+            // Close source
+            sources[comment.name].end = comment.node
+          } else {
+            // Otherwise, open it up
+            sources[comment.name] = {
+              start: comment.node,
+            }
           }
         }
 
         if (body.length) {
           body.forEach(node => {
-            const { leading, trailing } = getSourceNameCommentsFromNode(node)
-
-            leading.forEach(handleComment)
-
-            Object.values(sources).forEach(source => {
-              if (source.open) {
-                source.nodes.push(removeSourceCommentsFromNode(node))
-              }
-            })
-
-            trailing.forEach(handleComment)
+            const { leading, trailing } = getSourceNameCommentsFromNode(node);
+            [...leading, ...trailing].forEach(handleComment)
           })
         }
 
         Object.keys(sources).forEach(sourceName => {
-          const ast = t.file(t.program(sources[sourceName].nodes))
-          const { code: sourceString } = transformFromAst(ast)
+          const source = sources[sourceName]
+          const sourceCode = makeSourceCode(this.file.code, source.start, source.end)
           const variablePath = path.find(path => path.scope.bindings[sourceName])
           if (!variablePath || !variablePath.scope) {
-            return
+            throw path.buildCodeFrameError(
+              `Couldn't find the 'let/var ${sourceName}' variable for @source ${sourceName}!`
+            )
           }
-          variablePath.scope.bindings[sourceName].path.node.init = t.stringLiteral(sourceString)
+          variablePath.scope.bindings[sourceName].path.node.init = t.stringLiteral(sourceCode)
+          removeSourceCommentsFromNode(source.start)
+          removeSourceCommentsFromNode(source.end)
         })
       },
     },
@@ -100,19 +107,37 @@ function getSourceNameCommentsFromNode (node) {
 }
 
 function removeSourceCommentsFromNode (node) {
-  return {
-    ...node,
-    leadingComments: node.leadingComments
-      ? node.leadingComments.filter(d => !isSourceComment(d))
-      : node.leadingComments,
-    trailingComments: node.trailingComments
-      ? node.trailingComments.filter(d => !isSourceComment(d))
-      : node.trailingComments,
-  }
+  node.leadingComments = node.leadingComments
+    ? node.leadingComments.filter(d => !isSourceComment(d))
+    : node.leadingComments
+  node.trailingComments = node.trailingComments
+    ? node.trailingComments.filter(d => !isSourceComment(d))
+    : node.trailingComments
+  return node
 }
 
-/*
-eslint
-  import/no-unassigned-import:0
-  import/no-dynamic-require:0
-*/
+function makeSourceCode (source, startComment, endComment) {
+  const startLine = startComment.loc.end.line
+  const endLine = endComment.loc.start.line
+  const startColumn = startComment.loc.end.column
+  const endColumn = endComment.loc.start.column
+  const isSingleLine = startLine === endLine
+
+  let sourceLines = source.split('\n').slice(startLine - 1, isSingleLine ? startLine : endLine)
+
+  sourceLines[0] = sourceLines[0].slice(startColumn)
+  sourceLines[sourceLines.length - 1] = sourceLines[sourceLines.length - 1].slice(
+    0,
+    isSingleLine ? endColumn - startColumn : endColumn
+  )
+  sourceLines = sourceLines.filter(d => d.length)
+  const shortestIndentation = sourceLines.reduce((acc, next) => {
+    let length = 0
+    while (next.charAt(length) === ' ') {
+      length += 1
+    }
+    return acc < length ? acc : length
+  }, Infinity)
+  sourceLines = sourceLines.filter(d => d.replace(/[ ]*/, ''))
+  return sourceLines.map(d => d.substring(shortestIndentation)).join('\n')
+}

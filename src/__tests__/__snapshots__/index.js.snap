@@ -2,14 +2,14 @@
 
 exports[`1. source 1`] = `
 
-const MySource = ''
+let MySource
 function ScopedFunction () {
   /* @source MySource */ const foo = 'bar' /* @source MySource */
 }
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const MySource = 'const foo = \\'bar\\';';
+let MySource = 'const foo = \\'bar\\' ';
 function ScopedFunction() {
   /* @source MySource */const foo = 'bar'; /* @source MySource */
 }
@@ -19,14 +19,14 @@ function ScopedFunction() {
 exports[`2. source 1`] = `
 
 function ScopedFunction () {
-  const MySource = ''
+  let MySource
   /* @source MySource */ const foo = 'bar' /* @source MySource */
 }
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
 function ScopedFunction() {
-  const MySource = 'const foo = \\'bar\\';';
+  let MySource = 'const foo = \\'bar\\' ';
   /* @source MySource */const foo = 'bar'; /* @source MySource */
 }
 
@@ -34,12 +34,12 @@ function ScopedFunction() {
 
 exports[`3. source 1`] = `
 
-const MySource = ''
+let MySource
 /* @source MySource */ const foo = 'bar' /* @source MySource */
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const MySource = 'const foo = \\'bar\\';';
+let MySource = 'const foo = \\'bar\\' ';
 /* @source MySource */const foo = 'bar'; /* @source MySource */
 
 `;
@@ -51,7 +51,7 @@ let MySource
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-let MySource = 'const foo = \\'bar\\';';
+let MySource = 'const foo = \\'bar\\' ';
 /* @source MySource */const foo = 'bar'; /* @source MySource */
 
 `;
@@ -67,7 +67,7 @@ const MyComponent = () => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-let MySource = 'const MyComponent = () => console.log(\\'Hello!\\');';
+let MySource = 'const MyComponent = () => (\\n  console.log(\\'Hello!\\')\\n)';
 // @source MySource
 const MyComponent = () => console.log('Hello!');
 // @source MySource
@@ -76,7 +76,7 @@ const MyComponent = () => console.log('Hello!');
 
 exports[`6. source 1`] = `
 
-const MySource = ''
+let MySource
 // @source MySource
 const MyComponent = () => (
   console.log('Hello!')
@@ -85,7 +85,7 @@ const MyComponent = () => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const MySource = 'const MyComponent = () => console.log(\\'Hello!\\');';
+let MySource = 'const MyComponent = () => (\\n  console.log(\\'Hello!\\')\\n)';
 // @source MySource
 const MyComponent = () => console.log('Hello!');
 // @source MySource
@@ -109,8 +109,8 @@ const MyComponent2 = () => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-let MySource = 'const MyComponent = () => console.log(\\'Hello!\\');';
-let MyOtherSource = 'const MyComponent2 = () => console.log(\\'Hello 2!\\');';
+let MySource = 'const MyComponent = () => (\\n  console.log(\\'Hello!\\')\\n)';
+let MyOtherSource = 'const MyComponent2 = () => (\\n  console.log(\\'Hello 2!\\')\\n)';
 // @source MySource
 const MyComponent = () => console.log('Hello!');
 // @source MySource
@@ -122,13 +122,13 @@ const MyComponent2 = () => console.log('Hello 2!');
 
 exports[`8. source 1`] = `
 
-const MySource = ''
+let MySource
 // @source MySource
 // @source MySource
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const MySource = '';
+let MySource = "";
 // @source MySource
 // @source MySource
 
@@ -178,7 +178,7 @@ exports[`12. source 1`] = `
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-/* @source MySource */const foo = 'bar'; /* @source MySource */
+SyntaxError: unknown: Couldn't find the 'let/var MySource' variable for @source MySource!
 
 `;
 
@@ -224,27 +224,18 @@ const noSource = 'please!'
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-let MySources = 'if (true) {// do this\\n}\\n\\nconst MyComponent = () => /* @source MySource2 */console.log(\\'Hello!\\') /* @source MySource2 */;\\n\\nconst AnotherComponent = () => // @source MySource3\\nconsole.log(\\'Hello Again!\\') // @source MySource3\\n;\\n\\nconst aVariable = \\'Hello!\\';';
-let MySource2 = 'console.log(\\'Hello!\\');';
-let MySource3 = 'console.log(\\'Hello Again!\\');';
-let MySource4 = 'const aVariable = \\'Hello!\\';';
+let MySources = 'if (true) {\\n  // do this\\n}\\nconst MyComponent = () => (\\n  /* @source MySource2 */\\n  console.log(\\'Hello!\\')\\n  /* @source MySource2 */\\n)\\nconst AnotherComponent = () => (\\n  // @source MySource3\\n  console.log(\\'Hello Again!\\')\\n  // @source MySource3\\n)\\n/* @source MySource4 */ const aVariable = \\'Hello!\\' /* @source MySource4 */';
+let MySource2 = 'console.log(\\'Hello!\\')';
+let MySource3 = 'console.log(\\'Hello Again!\\')';
+let MySource4 = 'const aVariable = \\'Hello!\\' ';
 
 /* @source MySources */
 
 if (true) {
   // do this
 }
-const MyComponent = () =>
-/* @source MySource2 */
-console.log('Hello!')
-/* @source MySource2 */
-
-;
-const AnotherComponent = () =>
-// @source MySource3
-console.log('Hello Again!')
-// @source MySource3
-;
+const MyComponent = () => console.log('Hello!');
+const AnotherComponent = () => console.log('Hello Again!');
 
 /* @source MySource4 */const aVariable = 'Hello!'; /* @source MySource4 */
 
@@ -265,12 +256,8 @@ const MyComponent = () => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-let MySource = 'console.log(\\'Hello!\\');';
-const MyComponent = () =>
-// @source MySource
-console.log('Hello!')
-// @source MySource
-;
+let MySource = 'console.log(\\'Hello!\\')';
+const MyComponent = () => console.log('Hello!');
 
 `;
 
@@ -284,10 +271,160 @@ const MyComponent = () => (
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-const MyComponent = () =>
-// @source MySource
-console.log('Hello!')
-// @source MySource
-;
+SyntaxError: unknown: Couldn't find the 'let/var MySource' variable for @source MySource!
+
+`;
+
+exports[`17. source 1`] = `
+
+const MySource = ''
+  
+const MyComponent = () => (
+  // @source MySource
+  console.log('Hello!')
+  // @source MySource
+)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+const MySource = 'console.log(\\'Hello!\\')';
+
+const MyComponent = () => console.log('Hello!');
+
+`;
+
+exports[`18. source 1`] = `
+
+let MyJSXSource
+const MyComponent = () => (
+  // @source MyJSXSource
+  <div>Hello!</div>
+  // @source MyJSXSource
+)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+let MyJSXSource = "<div>Hello!</div>";
+const MyComponent = () => React.createElement(
+  "div",
+  null,
+  "Hello!"
+);
+
+`;
+
+exports[`19. source 1`] = `
+
+let sourceCode
+
+console.log(sourceCode)
+
+export default () => (
+  <Sidebar>
+    <ChartConfig dataType="time">
+      {({ data }) => (
+        // @source sourceCode
+        <Chart data={data}>
+          <Axis primary type="time" position="bottom" />
+          <Axis type="linear" position="left" stacked />
+          <Series type={Area} />
+          <Tooltip />
+        </Chart>
+        // @source sourceCode
+      )}
+    </ChartConfig>
+    <Code source={sourceCode} />
+  </Sidebar>
+)
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+let sourceCode = "<Chart data={data}>\\n  <Axis primary type=\\"time\\" position=\\"bottom\\" />\\n  <Axis type=\\"linear\\" position=\\"left\\" stacked />\\n  <Series type={Area} />\\n  <Tooltip />\\n</Chart>";
+
+console.log(sourceCode);
+
+export default (() => React.createElement(
+  Sidebar,
+  null,
+  React.createElement(
+    ChartConfig,
+    { dataType: "time" },
+    ({ data }) => React.createElement(
+      Chart,
+      { data: data },
+      React.createElement(Axis, { primary: true, type: "time", position: "bottom" }),
+      React.createElement(Axis, { type: "linear", position: "left", stacked: true }),
+      React.createElement(Series, { type: Area }),
+      React.createElement(Tooltip, null)
+    )
+  ),
+  React.createElement(Code, { source: sourceCode })
+));
+
+`;
+
+exports[`20. source 1`] = `
+
+import React from 'react'
+
+      //
+      
+      import Sidebar from 'components/Sidebar'
+      import ChartConfig from 'components/ChartConfig'
+      import Code from 'components/Code'
+      
+      import { Chart, Axis, Series, Tooltip, Area } from '../../../src'
+      
+      const sourceCode = ''
+      
+      export default () => (
+        <Sidebar>
+          <ChartConfig dataType="time">
+            {({ data }) => (
+              // @source sourceCode
+              <Chart data={data}>
+                <Axis primary type="time" position="bottom" />
+                <Axis type="linear" position="left" stacked />
+                <Series type={Area} />
+                <Tooltip />
+              </Chart>
+              // @source sourceCode
+            )}
+          </ChartConfig>
+          <Code source={sourceCode} />
+        </Sidebar>
+      )
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import React from 'react';
+
+//
+
+import Sidebar from 'components/Sidebar';
+import ChartConfig from 'components/ChartConfig';
+import Code from 'components/Code';
+
+import { Chart, Axis, Series, Tooltip, Area } from '../../../src';
+
+const sourceCode = '<Chart data={data}>\\n  <Axis primary type="time" position="bottom" />\\n  <Axis type="linear" position="left" stacked />\\n  <Series type={Area} />\\n  <Tooltip />\\n</Chart>';
+
+export default (() => React.createElement(
+  Sidebar,
+  null,
+  React.createElement(
+    ChartConfig,
+    { dataType: 'time' },
+    ({ data }) => React.createElement(
+      Chart,
+      { data: data },
+      React.createElement(Axis, { primary: true, type: 'time', position: 'bottom' }),
+      React.createElement(Axis, { type: 'linear', position: 'left', stacked: true }),
+      React.createElement(Series, { type: Area }),
+      React.createElement(Tooltip, null)
+    )
+  ),
+  React.createElement(Code, { source: sourceCode })
+));
 
 `;
