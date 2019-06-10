@@ -7,21 +7,19 @@ import plugin from '../'
 const projectRoot = path.join(__dirname, '../../')
 
 expect.addSnapshotSerializer({
-  print (val) {
+  print(val) {
     return val.split(projectRoot).join('<PROJECT_ROOT>/')
   },
-  test (val) {
+  test(val) {
     return typeof val === 'string'
-  },
+  }
 })
-
-const shouldError = code => ({ code, error: true })
 
 pluginTester({
   plugin,
   snapshot: true,
   babelOptions: {
-    presets: ['react'],
+    presets: ['@babel/preset-react']
   },
   tests: [
     `
@@ -92,9 +90,6 @@ pluginTester({
       let MySource = 'I should be the here'
       /* other comment */ const foo = 'bar' /* other comment */
     `,
-    shouldError(`
-      /* @source MySource */ const foo = 'bar' /* @source MySource */
-    `),
     `
       /* other comment */ const foo = 'bar' /* other comment */
     `,
@@ -135,13 +130,6 @@ pluginTester({
         // @source MySource
       )
     `,
-    shouldError(`
-      const MyComponent = () => (
-        // @source MySource
-        console.log('Hello!')
-        // @source MySource
-      )
-    `),
     `
       const MySource = ''
   
@@ -212,5 +200,62 @@ pluginTester({
         </Sidebar>
       )
     `,
-  ],
+    {
+      error: true,
+      snapshot: false,
+      code: `
+        const MyComponent = () => (
+          // @source MySource
+          console.log('Hello!')
+          // @source MySource
+        )    
+    `
+    },
+    `import React from 'react'
+
+    //
+    
+    import useChartConfig from 'hooks/useChartConfig'
+    import Box from 'components/Box'
+    import { Chart } from '../../../dist'
+    
+    let sourceCode
+    
+    // @source sourceCode
+
+    export default () => {
+      const { data, randomizeData } = useChartConfig({
+        series: 10
+      })
+      const series = React.useMemo(
+        () => ({
+          type: 'area'
+        }),
+        []
+      )
+      const axes = React.useMemo(
+        () => [
+          { primary: true, position: 'bottom', type: 'time' },
+          { position: 'left', type: 'linear', stacked: true }
+        ],
+        []
+      )
+      return (
+        <>
+          <button onClick={randomizeData}>Randomize Data</button>
+          <br />
+          <br />
+          <Box>
+            <Chart data={data} series={series} axes={axes} tooltip />
+          </Box>
+          <br />
+          <pre>
+            <code>{sourceCode}</code>
+          </pre>
+        </>
+      )
+    }
+    // @source sourceCode
+    `
+  ]
 })

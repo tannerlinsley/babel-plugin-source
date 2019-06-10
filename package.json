@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-source",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Extract source code to strings at build-time",
   "engines": {
     "node": ">=4",
@@ -30,20 +30,32 @@
   "author": "Tanner Linsley <tannerlinsley@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.4.5",
     "babel-plugin-macros": "^2.0.0",
     "babel-register": "^6.26.0",
     "babylon": "^6.18.0",
-    "eslint-config-react-tools": "^1.2.5",
+    "eslint-config-prettier": "^4.3.0",
     "require-from-string": "^2.0.1"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.0.0",
     "ast-pretty-print": "^2.0.1",
-    "babel-plugin-tester": "^5.0.0",
-    "babel-preset-react": "^6.24.1",
-    "kcd-scripts": "^0.30.4"
+    "babel-eslint": "9.x",
+    "babel-plugin-tester": "^6.2.1",
+    "eslint": "5.x",
+    "eslint-config-react-app": "^4.0.1",
+    "eslint-plugin-flowtype": "2.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-jsx-a11y": "6.x",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "1.5.0",
+    "kcd-scripts": "^1.4.0"
   },
   "eslintConfig": {
-    "extends": "react-tools"
+    "extends": [
+      "react-app",
+      "prettier"
+    ]
   },
   "eslintIgnore": [
     "node_modules",
@@ -51,7 +63,9 @@
     "dist"
   ],
   "babel": {
-    "presets": "kcd-scripts/babel"
+    "presets": [
+      "kcd-scripts/babel"
+    ]
   },
   "repository": {
     "type": "git",
