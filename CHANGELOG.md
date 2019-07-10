@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.0.5-6
+
+- Handle empty body edge-case bug
+
+## 0.0.4
+
+- Handle empty comments
+
 ## 0.0.3
 
 - Use recursion to handle unmatched comments

@@ -4,23 +4,18 @@ export default function sourcePlugin(babel) {
   const expressionVisitor = {
     Expression(path) {
       const { node } = path
-
       const { leading, trailing } = getSourceNameCommentsFromNode(node)
       if (node.__sourceHandled || (!leading.length && !trailing.length)) {
         return
       }
-
       node.__sourceHandled = true
       const lastLeading = leading[leading.length - 1]
       const firstTrailing = trailing[trailing.length - 1]
-
       this.handleComment(lastLeading)
       this.handleComment(firstTrailing)
-
       removeSourceCommentsFromNode(node)
     }
   }
-
   return {
     name: 'source',
     visitor: {
@@ -29,13 +24,15 @@ export default function sourcePlugin(babel) {
         if (path.node.__sourceHandled) {
           return
         }
+
         path.node.__sourceHandled = true
-
         const { body } = path.node
-
         const sources = {}
 
         const handleComment = comment => {
+          if (!comment) {
+            return
+          }
           if (sources[comment.name]) {
             // Don't handle duplicates
             if (sources[comment.name].start === comment.node) {
@@ -55,7 +52,9 @@ export default function sourcePlugin(babel) {
           }
         }
 
-        if (body.length) {
+        handleComment()
+
+        if (body && body.length) {
           body.forEach(node => {
             const { leading, trailing } = getSourceNameCommentsFromNode(node)
             ;[...leading, ...trailing].forEach(handleComment)
